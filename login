@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoe Store - Log In & Sign Up</title>
+    <link rel="shortcut icon" href="shoe-logo.png" type="image/x-icon">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #6a0dad);
+            color: #fff;
+            text-align: center;
+        }
+
+        .logo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 20px;
+    filter: drop-shadow(0 0 10px #9400d3);
+
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 32px;
+            text-shadow: 0 0 15px #9400d3;
+        }
+
+        .container {
+            background: linear-gradient(135deg, #1a1a1a, #6a0dad);
+            padding: 30px;
+            margin: auto;
+            width: 350px;
+            box-shadow: 0px 4px 15px rgba(148, 0, 211, 0.5);
+            border-radius: 12px;
+            margin-top: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0px 4px 15px rgba(148, 0, 211, 0.5);
+            }
+            to {
+                box-shadow: 0px 6px 25px rgba(148, 0, 211, 0.9);
+            }
+        }
+
+        .container:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 20px rgba(148, 0, 211, 0.7);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #9400d3;
+            border-radius: 6px;
+            font-size: 14px;
+            background: linear-gradient(135deg, #1a1a1a, #6a0dad);
+            color: #fff;
+            transition: border 0.3s ease-in-out, box-shadow 0.3s;
+        }
+
+        input:focus {
+            border: 1px solid #fff;
+            outline: none;
+            box-shadow: 0 0 15px #9400d3;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #9400d3, #6a0dad);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 0 15px #9400d3;
+            transition: all 0.3s ease-in-out;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #5a0099;
+            box-shadow: 0 0 25px #9400d3, 0 0 35px #6a0dad;
+            transform: scale(1.05);
+        }
+
+        p {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        a {
+            color: #9400d3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #6a0dad;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo">
+        <img src="shoe-logo.png" alt="Shoe Store Logo">
+    </div>
+
+    <h1>Welcome to Schizuuu Store!</h1>
+    <div class="container" id="login-container">
+        <h2>Log In</h2>
+        <form id="login-form">
+            <input type="email" id="email" name="email" placeholder="Email Address" required>
+            <input type="text" id="customer-id" name="customer-id" placeholder="Customer ID" required>
+            <input type="password" id="password" name="password" placeholder="Password" minlength="6" required>
+            <p>Password must be at least 6 characters</p>
+            <button type="submit">Log In</button>
+        </form>
+        <p>Don't have an account? <a href="#" onclick="toggleForm()">Sign Up here</a></p>
+    </div>
+
+    <div class="container" id="signup-container" style="display: none;">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="text" id="name" name="name" placeholder="Full Name" required>
+            <input type="text" id="customer-id-signup" name="customer-id" placeholder="Customer ID" required>
+            <input type="email" id="email-signup" name="email" placeholder="Email Address" required>
+            <input type="password" id="password-signup" name="password" placeholder="Create Password" minlength="6" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="#" onclick="toggleForm()">Log in here</a></p>
+    </div>
+
+    <script>
+        let failedAttempts = 0; 
+        let lockTime = 0; 
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("login-form").addEventListener("submit", function (event) {
+                event.preventDefault(); 
+    
+                const email = document.getElementById("email").value;
+                const customerId = document.getElementById("customer-id").value;
+                const password = document.getElementById("password").value;
+    
+                const correctPassword = localStorage.getItem("password") || "password123"; // password confirm mo
+    
+                if (failedAttempts >= 3) { // 3 attemp only     
+                    alert("Too many failed attempts! Please reset your password.");
+                    return;
+                }
+    
+                if (email && customerId && password.length >= 6) {
+                    if (password === correctPassword) {
+                        alert("Login successful!");
+                        window.location.href = "view.html"; // for homepage
+                    } else {
+                        failedAttempts++;
+                        alert(`Wrong password! Attempt ${failedAttempts}/3. Please wait 10 seconds before trying again.`);
+    
+                        document.getElementById("password").disabled = true;
+                        document.querySelector("button[type='submit']").disabled = true;
+    
+                        setTimeout(() => {
+                            if (failedAttempts < 3) {
+                                document.getElementById("password").disabled = false;
+                                document.querySelector("button[type='submit']").disabled = false;
+                                alert("You can now try again.");
+                            }
+                        }, 10000); // 10 seconds cooldown
+    
+                        if (failedAttempts === 3) {
+                            alert("Too many failed attempts! You need to change your password.");
+                            showResetPassword();
+                        }
+                    }
+                } else {
+                    alert("Please fill in all fields correctly.");
+                }
+            });
+    
+            document.getElementById("signup-form").addEventListener("submit", function (event) {
+                event.preventDefault();
+    
+                const name = document.getElementById("name").value;
+                const customerId = document.getElementById("customer-id-signup").value;
+                const email = document.getElementById("email-signup").value;
+                const password = document.getElementById("password-signup").value;
+    
+                if (name && customerId && email && password.length >= 6) {
+                    localStorage.setItem("password", password);
+                    alert("Sign-up successful! You can now log in.");
+                    toggleForm();
+                } else {
+                    alert("Please fill in all fields correctly.");
+                }
+            });
+        });
+    
+        function toggleForm() {
+            document.getElementById("login-container").style.display =
+                document.getElementById("login-container").style.display === "none" ? "block" : "none";
+            document.getElementById("signup-container").style.display =
+                document.getElementById("signup-container").style.display === "none" ? "block" : "none";
+        }
+    
+        function showResetPassword() {
+            let newPassword = prompt("Enter a new password:");
+            if (newPassword && newPassword.length >= 6) {
+                localStorage.setItem("password", newPassword); //change the password
+                alert("Password reset successful! Please log in with your new password.");
+                failedAttempts = 0;
+            } else {
+                alert("Password must be at least 6 characters.");
+            }
+        }
+    </script>
+    
+    
+</body>
+
+</html>
